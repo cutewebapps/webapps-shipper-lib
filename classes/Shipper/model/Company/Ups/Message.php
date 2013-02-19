@@ -5,10 +5,17 @@
  */
 class Shipper_Company_Ups_Message 
 {
-    
-    private $xmlVersion;
-    private $encoding;
-    
+    /**
+     * @var string
+     */
+    private $xmlVersion = '1.0';
+    /**
+     * @var string
+     */
+    private $encoding = 'ut8-8';
+    /**
+     * @var XMLWriter
+     */
     protected $xmlWriter;
     protected $xmlReader;
     
@@ -44,7 +51,12 @@ class Shipper_Company_Ups_Message
             }
         }
     }
-    public function setXmlVersion($in_xmlVersion)
+    /**
+     * 
+     * @param string $in_xmlVersion
+     * @return Shipper_Company_Ups_Message
+     */
+    public function setXmlVersion($in_xmlVersion = '1.0')
     {
         if($in_xmlVersion == '')
         {
@@ -54,8 +66,13 @@ class Shipper_Company_Ups_Message
         {
             $this->xmlVersion = $in_xmlVersion;
         }
+        return $this;
     }
-    public function setXmlEncoding($in_encoding)
+    /**
+     * @param string $in_encoding
+     * @return Shipper_Company_Ups_Message
+     */
+    public function setXmlEncoding($in_encoding = 'utf-8')
     {
         if($in_encoding == '')
         {
@@ -65,7 +82,14 @@ class Shipper_Company_Ups_Message
         {
             $this->encoding = $in_encoding;
         }
+        return $this;
     }
+    /**
+     * 
+     * @param string $in_xmlString
+     * @throws Exception
+     * @return Shipper_Company_Ups_Message
+     */
     public function parseXML($in_xmlString)
     {
         if(empty($in_xmlString))
@@ -77,7 +101,12 @@ class Shipper_Company_Ups_Message
             $this->xmlReader = new XMLReader();
             $this->xmlReader->XML($in_xmlString);
         }
+        return $this;
     }
+    /**
+     * 
+     * @return boolean
+     */
     public function isValidResponse()
     {
         if(!is_null($this->xmlReader))
@@ -86,14 +115,18 @@ class Shipper_Company_Ups_Message
         }
         return false;
     }
+    /**
+     * @return string
+     */
     public function toXML()
     {
-        $retValue = '';
         $this->xmlWriter->endDocument();
-        $retValue = $this->xmlWriter->outputMemory();
-        return $retValue;
+        return $this->xmlWriter->outputMemory();
     }
-    
+    /**
+     * get hash of current XML request
+     * @return string
+     */
     public function getHash()
     {
         $strOut = $this->toXML();

@@ -109,7 +109,7 @@ class Shipper_Company_Ups implements Shipper_Company
               $objShipperAccount->getProperty( 'Ups', 'User ID'), 
               $objShipperAccount->getProperty( 'Ups', 'License'), 
               $objShipperAccount->getProperty( 'Ups', 'Password'),
-              $objShipperAccount->isTestMode() || Develop_Mode::isLocal() || Develop_Mode::isDev()
+              $objShipperAccount->isTestMode() || Sys_Mode::isLocal() || Sys_Mode::isDev()
        );
        return $objService;
     }
@@ -208,7 +208,7 @@ class Shipper_Company_Ups implements Shipper_Company
             $nodeShipmentServiceOptions,
             $nodePackage );                
       
-       // Develop_Debug::dumpDie( Develop_Debug::formattedXml( $shipConfirmMsg->toXml() ) );
+       // Develop_Debug::dumpDie( Sys_Debug::formattedXml( $shipConfirmMsg->toXml() ) );
          
        $hash = $shipConfirmMsg->getHash();     
        $objLogEntry = Shipper_Component::getLogEntryByHash( 'Ups', $hash );
@@ -236,14 +236,14 @@ class Shipper_Company_Ups implements Shipper_Company
        
        if ( $objShipService->getResponseCode() == 0) {
            // if shipping labe error occured
-           if ( Develop_Mode::is( 'shippinglabel' ) ) {
-               Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getRequest() ) );
+           if ( Sys_Mode::is( 'shippinglabel' ) ) {
+               Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getRequest() ) );
                echo '<hr />';
-               Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+               Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
            }
            throw new Shipper_Label_Exception( $objShipService->getErrorText() );
        }
-       // Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+       // Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
        if ( $objShipService->getOrderTracking() == '' ) {
             throw new Shipper_Label_Exception( 'Error while getting label tracking number ' );
        }
@@ -284,16 +284,16 @@ class Shipper_Company_Ups implements Shipper_Company
                   $objLabelOptions->getOrderId(), $hash );
        }
        if ( $objShipService->getOrderTracking() == '' ) {
-            if ( Develop_Mode::is( 'shippinglabel' ) ) {
-                Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getRequest() ) );
+            if ( Sys_Mode::is( 'shippinglabel' ) ) {
+                Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getRequest() ) );
                 echo '<hr />';
-                Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+                Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
             }
             throw new Shipper_Label_Exception( 'Tracking was not set' );
        }
               
-       //Develop_Debug::dump( 
-       //     Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+       //Sys_Debug::dump( 
+       //     Sys_Debug::formattedXml( $objShipService->getResponse() ) );
             
        $zplLabel = $objShipService->getLabelCode();
        $file = new Common_File( Zend_Registry::get('AppFolder') 
@@ -448,14 +448,14 @@ class Shipper_Company_Ups implements Shipper_Company
        
        if ( $objShipService->getResponseCode() == 0) {
            // if shipping labe error occured
-           if ( Develop_Mode::isLocal() || Develop_Mode::is( 'shippinglabel' ) ) {
-               Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getRequest() ) );
+           if ( Sys_Mode::isLocal() || Sys_Mode::is( 'shippinglabel' ) ) {
+               Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getRequest() ) );
                echo '<hr />';
-               Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+               Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
            }
            throw new Shipper_Label_Exception( $objShipService->getErrorText() );
        }
-       // Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+       // Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
 
        // REQUEST #2 : ship accept message
        $shipAcceptMsg = new Shipper_Company_Ups_Message_ShipAccept('1.0');
@@ -491,10 +491,10 @@ class Shipper_Company_Ups implements Shipper_Company
                   $objLabelOptions->getOrderId(), $hash );
        }
        if ( $objShipService->getOrderTracking() == '' ) {
-            if ( Develop_Mode::is( 'shippinglabel' ) ) {
-                Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getRequest() ) );
+            if ( Sys_Mode::is( 'shippinglabel' ) ) {
+                Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getRequest() ) );
                 echo '<hr />';
-                Develop_Debug::dump ( Develop_Debug::formattedXml( $objShipService->getResponse() ) );
+                Sys_Debug::dump ( Sys_Debug::formattedXml( $objShipService->getResponse() ) );
             }
             throw new Shipper_Label_Exception( 'Retrun tracking was not set' );
        }       
@@ -535,9 +535,10 @@ class Shipper_Company_Ups implements Shipper_Company
     }
     
     /**
+     * the only method which should work at this point...
      * send request to get address candidates
      */
-    public function requestAddressValidation( $objShipperAccount, $objAddress )
+    public function requestAddressValidation( $objShipperAccount, $objAddress, $strOrderId = '' )
     {
        $objService = $this->initService( $objShipperAccount,
             'Shipper_Company_Ups_Service_AddressValidation' );
@@ -549,48 +550,44 @@ class Shipper_Company_Ups implements Shipper_Company
        $objMessage->setNodes( $nodeAddress, 
             Shipper_Company_Ups_Message_AddressValidationRequest::OptionAddressValidation );
        
-       // Develop_Debug::dumpDie( $objMessage->toXml() );
-            
        // cache request here to avoid double responses
        $hash = $objMessage->getHash();
        /**
         * @var Shipper_Log $objLogEntry
         */
-       $objLogEntry = Shipper_Component::getLogEntryByHash( 'Ups', $hash );
+       $objLogEntry = Shipper_Log::Table()->fetchByHash( 'ups', $hash, $objShipperAccount->getName() );
        /**
         * Changed by Sergey Palutin
         */
        $strResponse = '';
+
+       if ( is_object( $objLogEntry ) && $objLogEntry->getResponse() == "") {
+           $objLogEntry->delete(); $objLogEntry = null;
+       }
+       
        if ( is_object( $objLogEntry ) ) {
-           $strResponse = $objLogEntry->getResponse();
-
-       }
-
-       if ($strResponse != '') {
-           $objService->setResponse( $strResponse);
-           if ( is_object( $objLogEntry ) ) {
-               #$objLogEntry->delete();
-           }
-       }
-       else {
+            $strResponse = $objLogEntry->getResponse();
+            $objService->setResponse( $strResponse);
+       } else {
+            
             $objService->addressValidationRequest( $objMessage );
-            Shipper_Component::addLogEntry( 'Ups', 'ADDRESS_VALIDATION', 
-                  $objService->getErrorCode() ,    
-                  $objService->getRequest(), 
-                  $objService->getResponse(), 
-                  $orderId, $hash );
+            if ( $objService->getResponse() != "" ) {
+                Shipper_Log::Table()->add( 'ups', 'ADDRESS_VALIDATION', 
+                      $objService->getErrorCode() ,    
+                      $objService->getRequest(), 
+                      $objService->getResponse(), 
+                      $strOrderId, $hash, 
+                      $objShipperAccount->getName()  );
+            }
        }
-       
-       $tblValidation = Shipper_Validation::Table();
-       
        
        if ($objService->getErrorCode() == 0 && !$objService->isNoCandidates() ) {
+
             $arrCandidates = $objService->getAddressCanidates();
             #echo '<div>Candidates: '.count( $arrCandidates ).'</div>';
             foreach ($arrCandidates as $i => $arrSuggestion) {
-                $row = $tblValidation->createRow();
-                $row->shv_company = 'Ups';
-                $row->shv_order = $orderId;
+                $row = Shipper_Validation::Table()->createRow();
+                $row->shv_company = 'ups';
                 $row->shv_number = $i + 1;
                 
                 // initial information
@@ -662,7 +659,7 @@ class Shipper_Company_Ups implements Shipper_Company
             $nodeShipmentServiceOptions
         );
 
-        #Develop_Debug::dumpDie($objRateRequest->toXml());
+        #Sys_Debug::dumpDie($objRateRequest->toXml());
         /**
          * @var Shipper_Company_Ups_Service_Rate $objService;
          */

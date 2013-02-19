@@ -350,4 +350,16 @@ class Shipper_Address
         $this->strAddr3 = $strAddr3;
     }
 
+    /**
+     * checkes that main address fields are not empty
+     * @return boolean
+     */
+    public function isValid()
+    {
+        if ( $this->strAddr1 == "" || $this->strCity == "" 
+                || $this->strState == "" || $this->strCountry == "" ) {
+            return false;
+        }
+        return true;
+    }
 }

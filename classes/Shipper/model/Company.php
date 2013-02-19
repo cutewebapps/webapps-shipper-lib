@@ -17,11 +17,11 @@ interface Shipper_Company
     /**
      * @return array of account properties
      */
-	public function getAccountFields();    
-	/**
-	 * @return tracking url from stracking code
-	 * @param string $strTracking
-	 */
+    public function getAccountFields();    
+    /**
+     * @return tracking url from stracking code
+     * @param string $strTracking
+     */
     public function getTrackingLink( $strTracking );
     /**
      * @return float estimate package cost

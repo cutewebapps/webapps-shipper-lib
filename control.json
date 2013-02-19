@@ -1,0 +1,8 @@
+{
+    "name": "webapps-shipper-lib",
+    "version" : "0.1.0",
+    "classes" : [ "Shipper" ],
+    "deps" : [
+        "webapps-framework-lib"
+    ]
+}

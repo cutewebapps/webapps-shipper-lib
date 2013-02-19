@@ -5,12 +5,12 @@
  * Table for storage of all addresses with address validation
  *
  **/
-class BlSystem_Address_Table extends DBx_Table
+class Shipper_Validation_Table extends DBx_Table
 {
 /**
  * database table name
  */
-    protected $_name='shiupper_validation';
+    protected $_name='shipper_validation';
 /**
  * database table primary key
  */
