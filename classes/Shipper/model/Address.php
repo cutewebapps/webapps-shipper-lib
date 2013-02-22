@@ -356,10 +356,28 @@ class Shipper_Address
      */
     public function isValid()
     {
-        if ( $this->strAddr1 == "" || $this->strCity == "" 
-                || $this->strState == "" || $this->strCountry == "" ) {
+        if ( trim( $this->strAddr1 ) == "" || 
+             trim( $this->strCity ) == "" || 
+             trim( $this->strZip ) == "" || 
+             trim( $this->strState ) == "" || 
+             trim( $this->strCountry ) == "" ) {
             return false;
         }
         return true;
+    }
+    /**
+     * whether ZIP is matching number of character
+     * @return boolean
+     */
+    public function isZipValid()
+    {
+        if ($this->isDomestic()) {
+            return preg_match( "/^\d\d\d\d\d(-\d\d\d\d)$/", $this->strZip );
+        } else if ( $this->isCanada() ){
+            return preg_match( "/^\w\w\w-\w\w\w$/", $this->strZip );
+        }
+        
+        // we dont knwo anything on other countries
+        return (trim( $this->strZip ) != "" );
     }
 }
