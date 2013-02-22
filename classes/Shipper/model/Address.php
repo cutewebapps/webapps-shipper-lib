@@ -372,12 +372,12 @@ class Shipper_Address
     public function isZipValid()
     {
         if ($this->isDomestic()) {
-            return preg_match( "/^\d\d\d\d\d(-\d\d\d\d)$/", $this->strZip );
+            return preg_match( "/^\d\d\d\d\d(\-\d\d\d\d)?$/", $this->strZip );
         } else if ( $this->isCanada() ){
-            return preg_match( "/^\w\w\w-\w\w\w$/", $this->strZip );
+            return preg_match( "/^\w\w\w\s*\w\w\w$/", $this->strZip );
         }
         
-        // we dont knwo anything on other countries
+        // we dont know anything on other countries
         return (trim( $this->strZip ) != "" );
     }
 }
