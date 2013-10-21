@@ -47,16 +47,16 @@ final class Shipper_Company_Ups_Node_AddressKeyFormat extends Shipper_Company_Up
         //$arrLines = $this->_objAddress->getAddressLines();
         //foreach( $arrLines as $strLine ) if ( trim( $strLine ) != '' )
         //        $retValue .= '<AddressLine>'.$strLine.'</AddressLine>'."\n";
-        
-        $retValue .= '<AddressLine>'.$this->_objAddress->getAddressLine1().'</AddressLine>'."\n";
+        // resolve html entities
+        $retValue .= '<AddressLine>' . htmlentities($this->_objAddress->getAddressLine1()) . '</AddressLine>'."\n";
         if ($this->_objAddress->getAddressLine2()) 
-            $retValue .= '<AddressLine>'.$this->_objAddress->getAddressLine2().'</AddressLine>'."\n";
+            $retValue .= '<AddressLine>' . htmlentities($this->_objAddress->getAddressLine2()) . '</AddressLine>'."\n";
         
                 
-        $retValue .= '<CountryCode>'.$this->_objAddress->getCountry().'</CountryCode>'."\n";
-        $retValue .= '<PoliticalDivision1>'.$this->_objAddress->getState().'</PoliticalDivision1>'."\n";
-        $retValue .= '<PoliticalDivision2>'.$this->_objAddress->getCity().'</PoliticalDivision2>'."\n";
-        $retValue .= '<PostcodePrimaryLow>'.$this->_objAddress->getZip5().'</PostcodePrimaryLow>'."\n";
+        $retValue .= '<CountryCode>' . htmlentities($this->_objAddress->getCountry()) . '</CountryCode>'."\n";
+        $retValue .= '<PoliticalDivision1>' . htmlentities($this->_objAddress->getState()) . '</PoliticalDivision1>'."\n";
+        $retValue .= '<PoliticalDivision2>' . htmlentities($this->_objAddress->getCity()) . '</PoliticalDivision2>'."\n";
+        $retValue .= '<PostcodePrimaryLow>' . htmlentities($this->_objAddress->getZip5()) . '</PostcodePrimaryLow>'."\n";
 
         return $retValue."\n"
                 .'</AddressKeyFormat>'."\n";
